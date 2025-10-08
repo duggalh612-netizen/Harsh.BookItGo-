@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>BookItGo - Train Between Stations</title>
+<style>
+body {
+  background: #eef2f9;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.skeleton {
+  width: 100%;
+  max-width: 360px;
+  height: 160px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  margin-bottom: 20px;
+}
+@keyframes shimmer {
+  100% { background-position: -200% 0; }
+}
+
+/* TRAIN CARD STYLES */
+.train-card {
+  position: relative;
+  display: flex;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 360px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s, border 0.3s;
+  text-decoration: none;
+  color: inherit;
+}
+
+.train-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.3);
+  border: 2px solid #7c3aed;
+}
+
+.line {
+  width: 4px;
+  background: linear-gradient(180deg, #7c3aed, #2563eb);
+}
+
+.content {
+  padding: 16px;
+  width: calc(100% - 4px);
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.train-name-number {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.train-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.train-number, .train-type {
+  background: #e0e7ff;
+  color: #3730a3;
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.train-type {
+  background: #e0e7ff;
+  color: rgba(55, 48, 163, 0.7);
+}
+
+.train-route {
+  font-size: 14px;
+  color: #4b5563;
+  margin-bottom: 12px;
+}
+
+.timing {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.gradient-line {
+  height: 3px;
+  width: fit-content;
+  max-width: 100%;
+  background: linear-gradient(90deg, #7c3aed, #2563eb);
+  border-radius: 2px;
+  margin-top: 4px;
+  align-self: center;
+}
+
+.timing-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 12px;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.train-days {
+  font-size: 12px;
+  color: #6b7280;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.days {
+  display: flex;
+  gap: 6px;
+}
+
+.days span {
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  transition: all 0.3s;
+}
+
+.days span.active {
+  background: linear-gradient(90deg, #7c3aed, #2563eb);
+  color: #ffffff;
+  transform: scale(1.1);
+}
+</style>
+</head>
+<body>
+<h2>Train Results</h2>
+<div id="trainContainer">
+  <div class="skeleton"></div>
+  <div class="skeleton"></div>
+  <div class="skeleton"></div>
+</div>
+
+<script>
+function formatTime(minutes) {
+  if (minutes === null) return "N/A";
+  let h = Math.floor(minutes / 60);
+  let m = minutes % 60;
+  let ampm = h >= 12 ? "PM" : "AM";
+  h = h % 12 || 12;
+  return `${h}:${m.toString().padStart(2,"0")} ${ampm}`;
+}
+
+function renderTrain(train, fromStation, toStation){
+  const dep = formatTime(fromStation.departureMinutes || fromStation.arrivalMinutes);
+  const arr = formatTime(toStation.arrivalMinutes || toStation.departureMinutes);
+  const duration = train.totalTime;
+  const distance = `${toStation.distanceKm - fromStation.distanceKm} km`;
+
+  return `
+  <a href="LIVE RUNNING STATUS.html?train_number=${train.trainNumber}" class="train-card">
+    <div class="line"></div>
+    <div class="content">
+      <div class="header">
+        <div class="train-name-number">
+          <div class="train-name">${train.trainName}</div>
+          <div class="train-number">#${train.trainNumber}</div>
+          <div class="train-type">${train.type}</div>
+        </div>
+      </div>
+      <div class="train-route">${fromStation.name} ➝ ${toStation.name}</div>
+      <div class="timing">
+        <div>${dep}</div>
+        <div>${duration}</div>
+        <div>${arr}</div>
+      </div>
+      <div class="gradient-line" style="width:120px;"></div>
+      <div class="timing-labels">
+        <div>Departure</div>
+        <div></div>
+        <div>Arrival</div>
+      </div>
+      <div class="footer">
+        <div style="font-size:15px; font-weight:700; text-align:center; margin-top:-20px; margin-bottom:6px; color:#111827;">
+          Distance: ${distance}
+        </div>
+        <div class="train-days">
+          Runs on:
+          <div class="days">
+            ${["S","M","T","W","T","F","S"].map(d=>`<span class="${train.runningDays.includes(d)?"active":""}">${d}</span>`).join("")}
+          </div>
+        </div>
+      </div>
+    </div>
+  </a>
+  `;
+}
+
+async function loadTrains(){
+  const params = new URLSearchParams(window.location.search);
+  const from = params.get("from");
+  const to = params.get("to");
+  const container = document.getElementById("trainContainer");
+
+  try {
+    const res = await fetch("https://duggalh612-netizen.github.io/Harsh-json-api/BookItGo");
+    const data = await res.json();
+
+    setTimeout(()=>{
+      const trains = data.trains || [];
+      const results = [];
+
+      trains.forEach(train=>{
+        const route = train.route;
+        const fromCode = from.split(" ")[0].toUpperCase().trim();
+        const toCode = to.split(" ")[0].toUpperCase().trim();
+
+        const fromIndex = route.findIndex(st => st.code.toUpperCase().trim() === fromCode);
+        const toIndex = route.findIndex(st => st.code.toUpperCase().trim() === toCode);
+
+        console.log("DEBUG:", fromCode, toCode, fromIndex, toIndex); // debugging
+
+        if(fromIndex !== -1 && toIndex !== -1 && fromIndex < toIndex){
+          results.push(renderTrain(train, route[fromIndex], route[toIndex]));
+        }
+      });
+
+      if(results.length === 0){
+        container.innerHTML = `<p>No trains found for ${from} ➝ ${to} 🚫</p>`;
+      } else {
+        container.innerHTML = results.join("");
+      }
+    }, 1000);
+
+  } catch(e){
+    console.error(e);
+    container.innerHTML = "<p>⚠️ Error loading train data</p>";
+  }
+}
+
+loadTrains();
+</script>
+</body>
+</html>

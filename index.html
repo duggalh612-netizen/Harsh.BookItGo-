@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookItGo</title>
+  <link rel="stylesheet" href="Harsh.css">
+</head>
+<body>
+  <div id="home">
+    <!-- Header: App Name + Tagline -->
+  <header>
+    <h1>BookItGo</h1>
+    <p>Plan Smart, Travel Smarter</p>
+  </header>
+  <!-- From-To Search Form -->
+  <section id="train-search-form">
+    <h2>Train Between Station</h2>
+      <form onsubmit="redirectToList(event)">
+      <label for="from">From:</label>
+      <input type="text" id="from" name="from" placeholder="Enter starting station">
+
+      <label for="to">To:</label>
+      <input type="text" id="to" name="to" placeholder="Enter destination station">
+
+      <button type="submit">Find Train</button>
+    </form>
+  </section>
+  
+  <script>
+        function redirectToList(e) {
+      e.preventDefault();
+      const from = document.getElementById("from").value.trim();
+      const to = document.getElementById("to").value.trim();
+
+      if (!from || !to) {
+        alert("Please enter both stations");
+        return;
+      }
+
+      // Redirect with query params
+      window.location.href = `Train-between-station.html?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+    }
+  
+  </script>
+  
+   <!-- Train Search by Name/Number -->
+  <section id="train-search-bar">
+    <h2>Search Train by Name/Number</h2>
+    <input type="text" placeholder="Enter Train Name or Number">
+    <button>Search</button>
+  </section>
+  
+  <style>
+    /* ========== BookItGo -- Light + Gradient Brand ========== */
+:root{
+  --bg: #f5f5f5;
+  --text: #1f2a37;
+  --muted: #6b7280;
+
+  /* Brand gradient: purple → blue */
+  --g1: #7c3aed;   /* purple-600 */
+  --g2: #2563eb;   /* blue-600 */
+
+  /* Glass tokens (ONLY used on the two form cards) */
+  --glass-bg: rgba(255,255,255,0.55);
+  --glass-br: 18px;
+  --glass-border: 1px solid rgba(255,255,255,0.6);
+  --glass-outline: 1px solid rgba(124,58,237,0.25);
+  --glass-shadow: 0 8px 24px rgba(31,41,55,0.12), 0 2px 6px rgba(31,41,55,0.06);
+
+  /* Radii / spacing */
+  --r-xl: 16px;
+  --r-2xl: 24px;
+  --pad: clamp(14px, 2.2vw, 20px);
+}
+
+/* Reset-ish */
+*{ box-sizing: border-box; }
+html,body{
+  margin:0;
+  padding:0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+  line-height: 1.45;
+}
+
+/* Subtle background flare + noise to make it feel premium */
+body{
+  min-height: 100svh;
+  background:
+    radial-gradient(1200px 600px at 110% -10%, rgba(124,58,237,0.08), transparent 60%),
+    radial-gradient(1000px 500px at -10% 0%, rgba(37,99,235,0.08), transparent 60%),
+    var(--bg);
+  position: relative;
+  overflow-x: hidden;
+}
+body::after{
+  /* super subtle noise grain */
+  content:"";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" opacity="0.05" viewBox="0 0 100 100"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2"/></filter><rect width="100%" height="100%" filter="url(%23n)"/></svg>');
+  mix-blend-mode: multiply;
+}
+
+/* ========== Header ========== */
+header{
+  padding: clamp(18px, 3vw, 28px);
+  text-align: center;
+}
+header h1{
+  margin: 0 0 6px 0;
+  font-size: clamp(28px, 5.5vw, 42px);
+  letter-spacing: 0.3px;
+  background: linear-gradient(110deg, var(--g1), var(--g2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+header p{
+  margin: 0;
+  font-size: clamp(14px, 2.5vw, 16px);
+  color: var(--muted);
+}
+
+/* ========== Sections layout ========== */
+section{
+  width: min(980px, 92vw);
+  margin: 18px auto;
+  padding: var(--pad);
+  border-radius: var(--r-xl);
+  background: #fff;            /* default: NOT glass */
+  box-shadow: 0 1px 0 rgba(0,0,0,0.03);
+}
+
+/* Titles */
+section > h2{
+  margin: 0 0 10px 0;
+  font-size: clamp(18px, 3.5vw, 22px);
+  color: #111827;
+}
+
+/* ========== GLASSMORPHISM -- ONLY on two forms ========== */
+/* Train From-To form */
+#train-search-form{
+  background: var(--glass-bg);
+  border-radius: var(--glass-br);
+  border: var(--glass-border);
+  outline: var(--glass-outline);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(14px) saturate(125%);
+  -webkit-backdrop-filter: blur(14px) saturate(125%);
+  position:relative;
+  overflow: clip;
+}
+#train-search-form::before{
+  /* gradient edge highlight */
+  content:"";
+  position:absolute; inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(124,58,237,0.35), rgba(37,99,235,0.35), rgba(255,255,255,0.15));
+  mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  padding: 1.5px;
+  pointer-events: none;
+}
+
+/* Train Name/Number search bar */
+#train-search-bar{
+  background: var(--glass-bg);
+  border-radius: var(--glass-br);
+  border: var(--glass-border);
+  outline: var(--glass-outline);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(14px) saturate(125%);
+  -webkit-backdrop-filter: blur(14px) saturate(125%);
+  position:relative;
+  overflow: clip;
+}
+
+/* ========== Form Elements (shared) ========== */
+#train-search-form form{
+  display: grid;
+  gap: 12px;
+}
+#train-search-form label{
+  font-size: 13px;
+  color: #374151;
+}
+#train-search-form input,
+#train-search-bar input{
+  width: 100%;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: rgba(255,255,255,0.8);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 15px;
+  outline: 0;
+  transition: border-color .2s, box-shadow .2s, transform .05s;
+}
+#train-search-form input:focus,
+#train-search-bar input:focus{
+  border-color: rgba(124,58,237,0.5);
+  box-shadow: 0 0 0 6px rgba(124,58,237,0.12);
+}
+
+/* Buttons inside sections (NOT the fixed center one) */
+#train-search-form button,
+#train-search-bar button{
+  cursor: pointer;
+  width:100%;
+  border: 0;
+  margin-block:12px;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  color: #fff;
+  background: linear-gradient(100deg, var(--g1), var(--g2));
+  position:relative;
+  transition: transform .06s ease, filter .2s ease, box-shadow .2s ease;
+  box-shadow: 0 10px 18px rgba(124,58,237,0.25);
+}
+#train-search-form button:hover,
+#train-search-bar button:hover{
+  filter: brightness(1.05);
+  box-shadow: 0 12px 24px rgba(37,99,235,0.25);
+}
+#train-search-form button:active,
+#train-search-bar button:active{
+  transform: translateY(1px) scale(0.995);
+}
+
+
+  
+}
+#center-fab::before{
+  /* soft glow ring */
+  content:"";
+  position: absolute;
+  inset: -18%;
+  border-radius: inherit;
+  background: radial-gradient(closest-side, rgba(124,58,237,0.35), transparent 70%);
+  filter: blur(14px);
+  z-index: -1;
+  opacity: .8;
+  animation: pulseGlow 2.4s ease-in-out infinite;
+}
+#center-fab:hover{
+  filter: brightness(1.06);
+  transform: translate(-50%, -50%) scale(1.02);
+  box-shadow:
+    0 26px 52px rgba(124,58,237,0.42),
+    0 10px 22px rgba(37,99,235,0.28),
+    inset 0 0 0 1px rgba(255,255,255,0.3);
+}
+#center-fab:active{
+  transform: translate(-50%, -50%) scale(0.985);
+}
+
+/* Pulse animation */
+@keyframes pulseGlow{
+  0%, 100% { opacity: .75; transform: scale(1); }
+  50%      { opacity: 1;    transform: scale(1.06); }
+}
+
+/* ========== Fancy gradient underline for h2 inside glass sections ========== */
+#train-search-form > h2,
+#train-search-bar > h2{
+  position:relative;
+  padding-bottom: 6px;
+}
+#train-search-form > h2::after,
+#train-search-bar > h2::after{
+  content:"";
+  position:absolute; left:0; bottom:0;
+  width: 64px; height: 3px; border-radius: 3px;
+  background: linear-gradient(90deg, var(--g1), var(--g2));
+  box-shadow: 0 6px 12px rgba(124,58,237,0.25);
+}
+
+/* ========== Responsive tweaks ========== */
+@media (min-width: 720px){
+  #train-search-form form{
+    grid-template-columns: 1fr 1fr auto;
+    align-items: end;
+  }
+  #train-search-form label{ grid-column: span 3; }
+  #train-search-form input#from{ grid-column: 1; }
+  #train-search-form input#to{ grid-column: 2; }
+  #train-search-form button{ grid-column: 3; height: 44px; }
+}
+    
+  </style>
+  
+<!-- BookItGo Section Start -->
+<div class="bookitgo-box">
+    <div class="bookitgo-content">
+        <h1>Why use BookItGo</h1>
+        BookItGo is your ultimate travel companion for train journeys. With the app, you can easily check trains running between any two stations, along with departure, arrival, and complete schedule information. Its most useful feature is the live running status, which gives you real-time updates on your train’s location and any delays, keeping you always informed. This allows you to plan your journey smartly, avoid unnecessary waiting at stations, and travel with confidence. With BookItGo, traveling becomes faster, easier, and completely stress-free.
+    </div>
+</div>
+<!-- BookItGo Section End -->
+<div class="faq-section">
+    <h2 class="faq-title">Frequently Asked Questions</h2>
+    <div class="faq-title-line"></div>
+    <div class="faq-container">
+        <div class="faq-item">
+            <div class="faq-question">1. How do I find trains between two stations?</div>
+            <div class="faq-answer">You can simply enter the departure and arrival stations in the search box. The app will show you all available trains connecting those stations along with their schedules.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">2. How can I check the live running status of a train?</div>
+            <div class="faq-answer">Enter the train number or name. The app will display the current location, expected arrival, and departure times at upcoming stations.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">3. How long will the delay information be available if a train is late?</div>
+            <div class="faq-answer">The app continuously updates the delay information as provided by official sources. You can track the delay status in real-time until the train reaches its destination.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">4. How can I know the expected arrival and departure time at each station?</div>
+            <div class="faq-answer">Once you select the train, you can view its route details. This includes scheduled arrival and departure times at each stop, as well as updated times in case of delays.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">5. How do I check the route and stoppage details of a train?</div>
+            <div class="faq-answer">After searching for the train, you can click on the route option. The app will show all the stations the train passes through, along with halt durations and other relevant information.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">6. How to use BookItGo for train information?</div>
+            <div class="faq-answer">Open the BookItGo app, choose the train option, enter the “From” and “To” stations, and hit search. You’ll instantly get train schedules, live running status, platform details, delays, and more at your fingertips!</div>
+        </div>
+    </div>
+</div>
+<script>
+    const faqs = document.querySelectorAll('.faq-item');
+    faqs.forEach(item => {
+        item.querySelector('.faq-question').addEventListener('click', () => {
+            faqs.forEach(i => {
+                if(i !== item) i.classList.remove('active');
+            });
+            item.classList.toggle('active');
+        });
+    });
+</script>
+<div class="feedback-widget">
+  <div class="feedback-text">💬 Send your feedback</div>
+  <div class="feedback-bar">
+    <div class="emoji-btn" data-emoji="👍">👍<span class="emoji-count">0</span></div>
+    <div class="emoji-btn" data-emoji="❤️">❤️<span class="emoji-count">0</span></div>
+    <div class="emoji-btn" data-emoji="😮">😮<span class="emoji-count">0</span></div>
+    <div class="emoji-btn" data-emoji="😢">😢<span class="emoji-count">0</span></div>
+    <div class="emoji-btn" data-emoji="😡">😡<span class="emoji-count">0</span></div>
+  </div>
+</div>
+<script>
+  const emojis = document.querySelectorAll('.emoji-btn');
+
+function createConfetti(x, y, color){
+  const confetti = document.createElement('div');
+  confetti.classList.add('confetti');
+  confetti.style.backgroundColor = color;
+  confetti.style.left = x + 'px';
+  confetti.style.top = y + 'px';
+  document.body.appendChild(confetti);
+  setTimeout(() => confetti.remove(), 1000);
+}
+
+emojis.forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    // Update count
+    let countSpan = btn.querySelector('.emoji-count');
+    let count = parseInt(countSpan.innerText);
+    count++;
+    countSpan.innerText = count;
+
+    // Pop animation
+    countSpan.style.animation = 'pop 0.3s ease';
+    countSpan.addEventListener('animationend', () => countSpan.style.animation='');
+
+    // Confetti effect
+    for(let i=0;i<10;i++){
+      const color = `hsl(${Math.random()*360}, 100%, 50%)`;
+      const x = e.clientX + (Math.random()*40-20);
+      const y = e.clientY + (Math.random()*40-20);
+      createConfetti(x, y, color);
+    }
+  });
+});
+</script><!-- Contact Us Section -->
+<div class="contact-container">
+  <h3>Contact Us</h3>
+  <div class="contact-card">
+    <a href="mailto:duggalh612@gmail.com" class="contact-btn email-btn">
+      <img src="https://img.icons8.com/?size=100&id=38159&format=png&color=000000" alt="Gmail Icon" class="contact-icon">
+      Email Us
+    </a>
+    <a href="https://instagram.com/haarsh_92" target="_blank" class="contact-btn insta-btn">
+      <img src="https://img.icons8.com/?size=100&id=32292&format=png&color=000000" alt="Instagram Icon" class="contact-icon">
+      Instagram
+    </a>
+  </div>
+  <h3>Stay Contact With BookItGo new Feature Comeing Soon </h3>
+</div>
+<script src="stations.js"></script>
+</div>
+<!-- 🚆 Train List Section -->
+<div id="train-list" style="display:none;">
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <button class="back-btn" onclick="goBack()">←</button>
+        <h2 id="route-title">Delhi → Jaipur</h2>
+    </div>
+
+    <!-- Container for Train Cards -->
+    <div id="train-container"></div>
+</div>
+
+<style>
+/* 🌈 Top Bar */
+.top-bar {
+    background: linear-gradient(135deg, #7c3aed, #2563eb);
+    color: white;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 0 0 16px 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    animation: slideDown 0.4s ease;
+}
+.top-bar h2 {
+    flex: 1;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+.back-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* 🚂 Train Card */
+.train-card {
+    position: relative;
+    display: flex;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 360px;
+    overflow: hidden;
+    margin: 20px auto;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s, border 0.3s;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.5s forwards;
+}
+.train-card.selected {
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.3);
+    border: 2px solid #7c3aed;
+}
+.line {
+    width: 4px;
+    background: linear-gradient(180deg, #7c3aed, #2563eb);
+}
+.content {
+    padding: 16px;
+    width: calc(100% - 4px);
+    display: flex;
+    flex-direction: column;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+.train-name-number {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.train-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+}
+.train-number, .train-type {
+    background: #e0e7ff;
+    color: #3730a3;
+    font-size: 13px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    white-space: nowrap;
+}
+.train-type {
+    color: rgba(55, 48, 163, 0.7);
+}
+.train-route {
+    font-size: 14px;
+    color: #4b5563;
+    margin-bottom: 12px;
+}
+.timing {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 4px;
+}
+.gradient-line {
+    height: 3px;
+    background: linear-gradient(90deg, #7c3aed, #2563eb);
+    border-radius: 2px;
+    margin-top: 4px;
+    align-self: center;
+}
+.timing-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 12px;
+}
+.footer {
+    display: flex;
+    align-items: center;
+}
+.train-days {
+    font-size: 12px;
+    color: #6b7280;
+    display: flex;
+    gap: 6px;
+}
+.days {
+    display: flex;
+    gap: 6px;
+}
+.days span {
+    background: #f3f4f6;
+    color: #374151;
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    transition: all 0.3s;
+}
+.days span.active {
+    background: linear-gradient(90deg, #7c3aed, #2563eb);
+    color: #ffffff;
+    transform: scale(1.1);
+}
+
+/* 📱 Responsive */
+@media (max-width: 400px) {
+    .train-name { font-size: 16px; }
+    .train-number, .train-type { font-size: 12px; padding: 3px 8px; }
+    .train-route { font-size: 13px; }
+    .timing { font-size: 14px; }
+    .timing-labels { font-size: 10px; }
+    .days span { font-size: 10px; padding: 4px 8px; }
+}
+
+/* ✨ Animations */
+@keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideDown {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(0); }
+}
+@keyframes slideOut {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(20px); opacity: 0; }
+}
+</style>
+
+<script>
+
+</script>
+  </body>
+  </head>

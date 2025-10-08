@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Train Running Status</title>
+<style>
+body {
+  margin:0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #eef2f9;
+}
+
+/* Top bar */
+.top-bar {
+  position: sticky;
+  top:0;
+  background: #fff;
+  padding:10px 16px;
+  font-weight:600;
+  font-size:16px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.15);
+  z-index:100;
+  display:flex;
+  justify-content: space-between;
+  border-bottom: 2px solid #ddd;
+  border-radius:0 0 12px 12px;
+}
+
+/* Route container */
+.route-container {
+  display:flex;
+  flex-direction:column;
+  margin:16px 8px;
+  gap:24px;
+  position:relative;
+  padding-left:50px;
+}
+
+/* Single vertical line */
+.track-line {
+  position:absolute;
+  top:16px;
+  left:15px;
+  width:6px;
+  bottom:16px;
+  background:#ccc;
+  border-radius:3px;
+  z-index:0;
+}
+
+.gradient-line {
+  position:absolute;
+  top:16px;
+  left:15px;
+  width:6px;
+  height:0%;
+  background: linear-gradient(to bottom, #7c3aed, #2563eb);
+  border-radius:3px;
+  z-index:1;
+}
+
+.train-icon {
+  position:absolute;
+  width:33px;
+  height:33px;
+  background:url('https://i.postimg.cc/g2wkbNx1/Picsart-25-09-18-18-51-42-824.png') no-repeat center center;
+  background-size:contain;
+  transform: translate(-50%, -40%);
+  z-index:2;
+  border-radius:99px;
+  border:2px solid #2563eb;
+  left:17px;
+}
+
+/* Bubble message */
+.train-icon::after {
+  content: attr(data-msg);
+  position: absolute;
+  top: -35px;
+  left: 40px;
+  background: #2563eb;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* Station card */
+.station-card {
+  display:flex;
+  background:#fff;
+  border-radius:12px;
+  padding:12px;
+  align-items:flex-start;
+  gap:16px;
+  position:relative;
+  z-index:3;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+  margin-left:0;
+}
+
+.station-code {
+  font-weight:700;
+  color:#111827;
+  width:50px;
+  text-align:center;
+  flex-shrink:0;
+}
+
+.station-info {
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  position:relative;
+}
+
+.station-name {
+  font-weight:600;
+  font-size:14px;
+  color:#111827;
+}
+
+.times-container {
+  display:flex;
+  justify-content:flex-start;
+  align-items:center;
+  font-size:13px;
+  color:#555;
+}
+
+.times-container span {
+  margin-right:16px;
+}
+
+.halt {
+  font-size:12px;
+  color:#888;
+  text-align:center;
+  flex:1;
+}
+
+.platform-btn {
+  font-size:12px;
+  color:#1D4ED8;
+  text-decoration:underline;
+  cursor:pointer;
+  width:max-content;
+  margin-top:4px;
+}
+
+/* Modal */
+.modal-bg {
+  position:fixed;
+  top:0; left:0; right:0; bottom:0;
+  background: rgba(0,0,0,0.4);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:200;
+}
+
+.modal {
+  background:#fff;
+  padding:20px;
+  border-radius:12px;
+  width:80%;
+  max-width:300px;
+  text-align:center;
+  box-shadow:0 6px 20px rgba(0,0,0,0.2);
+}
+
+.modal input {
+  width:80%;
+  padding:8px;
+  margin:10px 0;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+.modal button {
+  background:#1D4ED8;
+  color:#fff;
+  padding:8px 16px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  margin-top:10px;
+}
+
+/* Thank you popup */
+.thankyou-popup {
+  position:fixed;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%) scale(0);
+  background: #22c55e;
+  color:#fff;
+  padding:12px 24px;
+  border-radius:12px;
+  font-weight:600;
+  z-index:300;
+  animation:popupAnim 0.5s forwards;
+}
+
+@keyframes popupAnim {
+  0%{transform:translateX(-50%) scale(0);}
+  50%{transform:translateX(-50%) scale(1.2);}
+  100%{transform:translateX(-50%) scale(1);}
+}
+
+@media(max-width:480px){
+  .station-code{width:40px;font-size:12px;}
+  .station-name{font-size:13px;}
+  .times-container{gap:10px;font-size:11px;}
+}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div id="current-date"></div>
+  <div id="current-time"></div>
+</div>
+
+<div class="route-container" id="route-container">
+  <div class="track-line"></div>
+  <div class="gradient-line" id="gradient-line"></div>
+  <div class="train-icon" id="train-icon" data-msg="Loading..."></div>
+</div>
+
+<div class="modal-bg" id="modal-bg">
+  <div class="modal">
+    <div id="modal-msg">Enter correct platform</div>
+    <input type="text" id="platform-input" placeholder="Platform number">
+    <button id="modal-ok">Update</button>
+  </div>
+</div>
+
+<script>
+const apiUrl = "Traindata.json";
+let route = null;
+let selectedPlatformBtn = null;
+
+// Date & Time
+function updateDateTime(){
+  const now = new Date();
+  document.getElementById("current-date").textContent = now.toLocaleDateString();
+  document.getElementById("current-time").textContent = now.toLocaleTimeString([], {hour: "2-digit", minute:"2-digit", hour12:true});
+}
+setInterval(updateDateTime,1000);
+updateDateTime();
+
+// Fetch train by query param
+const params = new URLSearchParams(window.location.search);
+const trainNo = params.get("train_number");
+
+fetch('https://duggalh612-netizen.github.io/Harsh-json-api/BookItGo')
+  .then(res=>res.json())
+  .then(data=>{
+    const train = data.trains.find(t=>t.trainNumber==trainNo);
+    if(train){
+      const fromIndex = train.route.findIndex(r=>r.code===train.fromStation.code);
+      const toIndex = train.route.findIndex(r=>r.code===train.toStation.code);
+      route = train.route.slice(fromIndex, toIndex+1);
+      // Global journey start: calculate based on current time & departure of first station
+      const now = new Date();
+      const firstDep = route[0].departureMinutes;
+      const lastArr = route[route.length-1].arrivalMinutes || route[route.length-1].departureMinutes;
+      // Assume train started journey in past minutes
+      const totalJourney = lastArr - firstDep;
+      const journeyOffset = now.getHours()*60 + now.getMinutes() - firstDep;
+      window.journeyStart = new Date(now.getTime() - journeyOffset*60000);
+      showStations(route);
+    }
+  });
+
+function showStations(route){
+  const container = document.getElementById("route-container");
+  route.forEach(station=>{
+    const card = document.createElement("div");
+    card.className="station-card";
+
+    const codeDiv = document.createElement("div");
+    codeDiv.className="station-code";
+    codeDiv.textContent=station.code;
+
+    const infoDiv = document.createElement("div");
+    infoDiv.className="station-info";
+
+    const nameDiv = document.createElement("div");
+    nameDiv.className="station-name";
+    nameDiv.textContent = station.name;
+
+    const timesDiv = document.createElement("div");
+    timesDiv.className="times-container";
+    const arrival = station.arrivalMinutes!==null?formatTime12(station.arrivalMinutes):"-";
+    const departure = station.departureMinutes!==null?formatTime12(station.departureMinutes):"-";
+    const halt = station.arrivalMinutes!==null && station.departureMinutes!==null ? (station.departureMinutes-station.arrivalMinutes)+" min" : "-";
+    timesDiv.innerHTML=`<span>Arr: ${arrival}</span><span class="halt">Halt: ${halt}</span><span>Dep: ${departure}</span>`;
+
+    const platformBtn = document.createElement("div");
+    platformBtn.className="platform-btn";
+    platformBtn.textContent="Platform 1";
+    platformBtn.addEventListener("click", ()=>{
+      selectedPlatformBtn = platformBtn;
+      showModal(`Update platform for ${station.name}`);
+    });
+
+    infoDiv.appendChild(nameDiv);
+    infoDiv.appendChild(timesDiv);
+    infoDiv.appendChild(platformBtn);
+
+    card.appendChild(codeDiv);
+    card.appendChild(infoDiv);
+
+    container.appendChild(card);
+  });
+
+  animateTrain(route);
+}
+
+function formatTime12(mins){
+  let h=Math.floor(mins/60);
+  let m=mins%60;
+  let period = h>=12 ? "PM":"AM";
+  h = h%12;
+  if(h===0) h=12;
+  m=m<10?"0"+m:m;
+  return `${h}:${m} ${period}`;
+}
+
+// Animate train
+function animateTrain(route){
+  const trainIcon = document.getElementById("train-icon");
+  const gradient = document.getElementById("gradient-line");
+  const line = document.querySelector(".track-line");
+  const lineHeight = line.offsetHeight;
+
+  const depMinutes = route[0].departureMinutes;
+  const arrMinutes = route[route.length-1].arrivalMinutes || route[route.length-1].departureMinutes;
+  const journeyDuration = arrMinutes - depMinutes;
+
+  function update(){
+    const now = new Date();
+    const passedMinutes = (now - window.journeyStart)/60000;
+    const progress = Math.min(Math.max(passedMinutes/journeyDuration,0),1);
+
+    const trainPos = progress*lineHeight;
+    trainIcon.style.top = `${trainPos}px`;
+    gradient.style.height = `${trainPos}px`;
+
+    // Station-wise status
+    for(let st of route){
+      const arrTime = st.arrivalMinutes ? new Date(window.journeyStart.getTime() + st.arrivalMinutes*60000) : null;
+      const depTime = st.departureMinutes ? new Date(window.journeyStart.getTime() + st.departureMinutes*60000) : null;
+
+      if(arrTime && now < arrTime){
+        trainIcon.setAttribute("data-msg", `🚆 Arriving at ${st.name}`);
+        break;
+      }
+      else if(arrTime && depTime && now >= arrTime && now <= depTime){
+        trainIcon.setAttribute("data-msg", `⏸ Halt at ${st.name}`);
+        break;
+      }
+      else if(depTime && now > depTime){
+        trainIcon.setAttribute("data-msg", `➡ Departed from ${st.name}`);
+      }
+    }
+
+    requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+// Modal
+function showModal(message){
+  document.getElementById("modal-msg").textContent = message;
+  document.getElementById("modal-bg").style.display="flex";
+}
+document.getElementById("modal-ok").addEventListener("click", ()=>{
+  const val = document.getElementById("platform-input").value;
+  if(selectedPlatformBtn && val){
+    selectedPlatformBtn.textContent=`Platform ${val}`;
+    showThankYou();
+  }
+  document.getElementById("modal-bg").style.display="none";
+  document.getElementById("platform-input").value="";
+});
+
+// Thank you popup
+function showThankYou(){
+  const popup = document.createElement("div");
+  popup.className="thankyou-popup";
+  popup.textContent="✅ Platform updated successfully!";
+  document.body.appendChild(popup);
+  setTimeout(()=>{popup.remove();},2000);
+}
+</script>
+</body>
+</html>

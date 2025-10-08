@@ -1,0 +1,520 @@
+file:///data/user/0/com.foxdebug.acodefree/files/alpine/home/Harsh.css/* ========== BookItGo -- Light + Gradient Brand ========== */
+:root{
+  --bg: #f5f5f5;
+  --text: #1f2a37;
+  --muted: #6b7280;
+
+  /* Brand gradient: purple → blue */
+  --g1: #7c3aed;   /* purple-600 */
+  --g2: #2563eb;   /* blue-600 */
+
+  /* Glass tokens (ONLY used on the two form cards) */
+  --glass-bg: rgba(255,255,255,0.55);
+  --glass-br: 18px;
+  --glass-border: 1px solid rgba(255,255,255,0.6);
+  --glass-outline: 1px solid rgba(124,58,237,0.25);
+  --glass-shadow: 0 8px 24px rgba(31,41,55,0.12), 0 2px 6px rgba(31,41,55,0.06);
+
+  /* Radii / spacing */
+  --r-xl: 16px;
+  --r-2xl: 24px;
+  --pad: clamp(14px, 2.2vw, 20px);
+}
+
+/* Reset-ish */
+*{ box-sizing: border-box; }
+html,body{
+  margin:0;
+  padding:0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+  line-height: 1.45;
+}
+
+/* Subtle background flare + noise to make it feel premium */
+body{
+  min-height: 100svh;
+  background:
+    radial-gradient(1200px 600px at 110% -10%, rgba(124,58,237,0.08), transparent 60%),
+    radial-gradient(1000px 500px at -10% 0%, rgba(37,99,235,0.08), transparent 60%),
+    var(--bg);
+  position: relative;
+  overflow-x: hidden;
+}
+body::after{
+  /* super subtle noise grain */
+  content:"";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" opacity="0.05" viewBox="0 0 100 100"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2"/></filter><rect width="100%" height="100%" filter="url(%23n)"/></svg>');
+  mix-blend-mode: multiply;
+}
+
+/* ========== Header ========== */
+header{
+  padding: clamp(18px, 3vw, 28px);
+  text-align: center;
+}
+header h1{
+  margin: 0 0 6px 0;
+  font-size: clamp(28px, 5.5vw, 42px);
+  letter-spacing: 0.3px;
+  background: linear-gradient(110deg, var(--g1), var(--g2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+header p{
+  margin: 0;
+  font-size: clamp(14px, 2.5vw, 16px);
+  color: var(--muted);
+}
+
+/* ========== Sections layout ========== */
+section{
+  width: min(980px, 92vw);
+  margin: 18px auto;
+  padding: var(--pad);
+  border-radius: var(--r-xl);
+  background: #fff;            /* default: NOT glass */
+  box-shadow: 0 1px 0 rgba(0,0,0,0.03);
+}
+
+/* Titles */
+section > h2{
+  margin: 0 0 10px 0;
+  font-size: clamp(18px, 3.5vw, 22px);
+  color: #111827;
+}
+
+/* ========== GLASSMORPHISM -- ONLY on two forms ========== */
+/* Train From-To form */
+#train-search-form{
+  background: var(--glass-bg);
+  border-radius: var(--glass-br);
+  border: var(--glass-border);
+  outline: var(--glass-outline);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(14px) saturate(125%);
+  -webkit-backdrop-filter: blur(14px) saturate(125%);
+  position:relative;
+  overflow: clip;
+}
+#train-search-form::before{
+  /* gradient edge highlight */
+  content:"";
+  position:absolute; inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(124,58,237,0.35), rgba(37,99,235,0.35), rgba(255,255,255,0.15));
+  mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  padding: 1.5px;
+  pointer-events: none;
+}
+
+/* Train Name/Number search bar */
+#train-search-bar{
+  background: var(--glass-bg);
+  border-radius: var(--glass-br);
+  border: var(--glass-border);
+  outline: var(--glass-outline);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(14px) saturate(125%);
+  -webkit-backdrop-filter: blur(14px) saturate(125%);
+  position:relative;
+  overflow: clip;
+}
+
+/* ========== Form Elements (shared) ========== */
+#train-search-form form{
+  display: grid;
+  gap: 12px;
+}
+#train-search-form label{
+  font-size: 13px;
+  color: #374151;
+}
+#train-search-form input,
+#train-search-bar input{
+  width: 100%;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: rgba(255,255,255,0.8);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 15px;
+  outline: 0;
+  transition: border-color .2s, box-shadow .2s, transform .05s;
+}
+#train-search-form input:focus,
+#train-search-bar input:focus{
+  border-color: rgba(124,58,237,0.5);
+  box-shadow: 0 0 0 6px rgba(124,58,237,0.12);
+}
+
+/* Buttons inside sections (NOT the fixed center one) */
+#train-search-form button,
+#train-search-bar button{
+  cursor: pointer;
+  width:100%;
+  border: 0;
+  margin-block:12px;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  color: #fff;
+  background: linear-gradient(100deg, var(--g1), var(--g2));
+  position:relative;
+  transition: transform .06s ease, filter .2s ease, box-shadow .2s ease;
+  box-shadow: 0 10px 18px rgba(124,58,237,0.25);
+}
+#train-search-form button:hover,
+#train-search-bar button:hover{
+  filter: brightness(1.05);
+  box-shadow: 0 12px 24px rgba(37,99,235,0.25);
+}
+#train-search-form button:active,
+#train-search-bar button:active{
+  transform: translateY(1px) scale(0.995);
+}
+
+
+  
+}
+#center-fab::before{
+  /* soft glow ring */
+  content:"";
+  position: absolute;
+  inset: -18%;
+  border-radius: inherit;
+  background: radial-gradient(closest-side, rgba(124,58,237,0.35), transparent 70%);
+  filter: blur(14px);
+  z-index: -1;
+  opacity: .8;
+  animation: pulseGlow 2.4s ease-in-out infinite;
+}
+#center-fab:hover{
+  filter: brightness(1.06);
+  transform: translate(-50%, -50%) scale(1.02);
+  box-shadow:
+    0 26px 52px rgba(124,58,237,0.42),
+    0 10px 22px rgba(37,99,235,0.28),
+    inset 0 0 0 1px rgba(255,255,255,0.3);
+}
+#center-fab:active{
+  transform: translate(-50%, -50%) scale(0.985);
+}
+
+/* Pulse animation */
+@keyframes pulseGlow{
+  0%, 100% { opacity: .75; transform: scale(1); }
+  50%      { opacity: 1;    transform: scale(1.06); }
+}
+
+/* ========== Fancy gradient underline for h2 inside glass sections ========== */
+#train-search-form > h2,
+#train-search-bar > h2{
+  position:relative;
+  padding-bottom: 6px;
+}
+#train-search-form > h2::after,
+#train-search-bar > h2::after{
+  content:"";
+  position:absolute; left:0; bottom:0;
+  width: 64px; height: 3px; border-radius: 3px;
+  background: linear-gradient(90deg, var(--g1), var(--g2));
+  box-shadow: 0 6px 12px rgba(124,58,237,0.25);
+}
+
+/* ========== Responsive tweaks ========== */
+@media (min-width: 720px){
+  #train-search-form form{
+    grid-template-columns: 1fr 1fr auto;
+    align-items: end;
+  }
+  #train-search-form label{ grid-column: span 3; }
+  #train-search-form input#from{ grid-column: 1; }
+  #train-search-form input#to{ grid-column: 2; }
+  #train-search-form button{ grid-column: 3; height: 44px; }
+}
+/* BookItGo CSS */
+.bookitgo-box {
+    position: relative;
+    max-width: 350px;
+    border-radius: 25px; /* fully rounded corners */
+    padding: 2px; /* for border container */
+    background: linear-gradient(270deg, #7b2ff7, #00dbde, #7b2ff7);
+    background-size: 600% 600%;
+    animation: borderAnimation 15s ease infinite; /* smooth gradient animation */
+    margin: 20px auto; /* center on page */
+}
+
+.bookitgo-content {
+    background: #ffffff; /* white content */
+    border-radius: 25px; /* match outer radius */
+    padding: 15px;
+    text-align: justify;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #333333;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1); /* subtle drop shadow */
+}
+
+@keyframes borderAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.bookitgo-content h1 {
+    text-align: center;
+    color: #2337c6;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+@media (max-width: 480px) {
+    .bookitgo-content {
+        padding: 20px;
+        font-size: 14px;
+    }
+    .bookitgo-content h1 {
+        font-size: 20px;
+    }
+}
+.faq-section {
+    max-width: 350px;
+    margin: 20px auto;
+    font-family: Arial, sans-serif;
+    
+}
+
+.faq-title {
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.faq-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.faq-item {
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 2px 7px rgba(0,0,0,0.1);
+    overflow: hidden;
+    border:1px solid #bababa;
+    transition: all 0.3s ease;
+}
+
+.faq-question {
+    padding: 8px 12px;
+    cursor: pointer;
+    position: relative;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.faq-question::after {
+    content: '+';
+    position: absolute;
+    right: 16px;
+    font-size: 14px;
+    transition: transform 0.3s ease;
+}
+
+.faq-item.active .faq-question::after {
+    transform: rotate(45deg);
+}
+
+.faq-answer {
+   Color:white;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s ease;
+    padding: 0 16px;
+    font-size: 15px;
+    background:linear-gradient(90deg,#7c3aed,#2563eb);
+}
+
+.faq-item.active .faq-answer {
+    padding: 8px 12px;
+    max-height: 300px;
+}
+.faq-title-line {
+    height: 4px;
+    width: 100%;
+    background: linear-gradient(90deg, #7c3aed, #2563eb);
+    border-radius: 2px;
+    margin-bottom: 15px;
+    box-shadow: 0 0 2px rgba(124, 58, 237, 0.7), 0 0 4px rgba(37, 99, 235, 0.2);
+}
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+
+.feedback-widget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  max-width: 500px;
+  margin: 20px auto;
+}
+
+.feedback-text {
+  font-family: 'Roboto', sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.feedback-bar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: #fff;
+  padding: 15px 20px;
+  border-radius: 30px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  width: 100%;
+  position: relative;
+}
+
+.emoji-btn {
+  font-size: 40px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.emoji-btn:hover {
+  transform: scale(1.3) rotate(5deg);
+}
+
+.emoji-count {
+  margin-top: 15px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  min-width: 24px;
+  text-align: center;
+}
+
+@keyframes pop {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.5); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.confetti {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  opacity: 0.9;
+  pointer-events: none;
+  border-radius: 2px;
+  animation: confettiFall 1s linear forwards;
+  z-index: 999;
+}
+
+@keyframes confettiFall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(150px) rotate(720deg); opacity: 0; }
+}
+
+/* Mobile adjustments */
+@media (max-width: 400px) {
+  .emoji-btn { font-size: 30px; }
+  .emoji-count { font-size: 14px; }
+  .feedback-text { font-size: 16px; }
+}
+/* Container */
+.contact-container {
+  max-width: 350px;
+  margin: 12px auto;
+  padding: 20px;
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+/* Title */
+.contact-container h2 {
+  font-size: 28px;
+  margin-bottom: 25px;
+}
+
+/* Buttons */
+.contact-card {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.contact-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  border: 2px solid #7c3aed; /* default outline */
+  border-radius: 12px;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 600;
+  color: #7c3aed;
+  transition: all 0.3s ease;
+  gap: 10px; /* space between icon and text */
+}
+
+/* Icons */
+.contact-icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* Hover effects */
+.email-btn {
+  border-color: #7c3aed;
+  color: #7c3aed;
+}
+
+.email-btn:hover {
+  background-color: #7c3aed;
+  color: white;
+}
+
+.insta-btn {
+  border-color: #fd1d1d;
+  color: #fd1d1d;
+}
+
+.insta-btn:hover {
+  background-color: #fd1d1d;
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .contact-btn {
+    font-size: 16px;
+    padding: 10px 15px;
+  }
+}
